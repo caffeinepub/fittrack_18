@@ -16,6 +16,7 @@ import BottomNav from "./components/BottomNav";
 import PremiumUpgradeDialog from "./components/PremiumUpgradeDialog";
 import QRCodeDisplay from "./components/QRCodeDisplay";
 import StripeSetup from "./components/StripeSetup";
+import UserCounter, { registerUserPrincipal } from "./components/UserCounter";
 import { useActor } from "./hooks/useActor";
 import { useInternetIdentity } from "./hooks/useInternetIdentity";
 import {
@@ -93,7 +94,15 @@ function AppShell({ goal }: { goal?: string | null }) {
       (foodQuery.data?.length ?? 0) === 0;
 
     if (hasNoData && identity) {
-      seedMutation.mutate();
+      seedMutation.mutate(undefined, {
+        onSuccess: () => {
+          const principal = identity.getPrincipal().toText();
+          registerUserPrincipal(principal);
+        },
+      });
+    } else if (identity) {
+      // User already has data — still register their principal
+      registerUserPrincipal(identity.getPrincipal().toText());
     }
   }, [
     actor,
@@ -274,7 +283,8 @@ function AppShell({ goal }: { goal?: string | null }) {
         isPremium={isPremium}
       />
 
-      {/* Stripe admin setup */}
+      {/* Admin section */}
+      <UserCounter />
       <StripeSetup />
 
       <Toaster />
