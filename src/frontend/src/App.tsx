@@ -62,11 +62,12 @@ function AppShell({ goal }: { goal?: string | null }) {
   }
 
   function handleTabChange(tab: TabName) {
-    if (tab === "body" && !isPremium) {
-      setPremiumDialogOpen(true);
-      return;
-    }
     setActiveTab(tab);
+  }
+
+  function handleUnlock() {
+    setPremiumDialogOpen(false);
+    setActiveTab("body");
   }
   const { actor, isFetching: actorFetching } = useActor();
   const seedMutation = useSeedDemoData();
@@ -245,7 +246,7 @@ function AppShell({ goal }: { goal?: string | null }) {
               <WeightTab />
             </motion.div>
           )}
-          {activeTab === "body" && isPremium && (
+          {activeTab === "body" && (
             <motion.div
               key="body"
               initial={{ opacity: 0, y: 8 }}
@@ -263,6 +264,7 @@ function AppShell({ goal }: { goal?: string | null }) {
       <PremiumUpgradeDialog
         open={premiumDialogOpen}
         onClose={() => setPremiumDialogOpen(false)}
+        onUnlock={handleUnlock}
       />
 
       {/* Bottom Navigation */}

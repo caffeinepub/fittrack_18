@@ -3,23 +3,9 @@ import { useState } from "react";
 import type { ShoppingItem, StripeSessionStatus } from "../backend.d";
 import { useActor } from "./useActor";
 
-const PREMIUM_KEY = "muscleBuild_premium";
-
 export function usePremiumStatus() {
-  const [isPremium, setIsPremiumState] = useState<boolean>(() => {
-    return localStorage.getItem(PREMIUM_KEY) === "true";
-  });
-
-  function setPremium(value: boolean) {
-    if (value) {
-      localStorage.setItem(PREMIUM_KEY, "true");
-    } else {
-      localStorage.removeItem(PREMIUM_KEY);
-    }
-    setIsPremiumState(value);
-  }
-
-  return { isPremium, setPremium };
+  // Muscle heatmap is free — everyone has access
+  return { isPremium: true, setPremium: (_: boolean) => {} };
 }
 
 export function useCreateCheckoutSession() {

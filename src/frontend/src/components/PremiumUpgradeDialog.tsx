@@ -7,54 +7,27 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Crown, Loader2, Sparkles, X, Zap } from "lucide-react";
+import { Crown, Sparkles, X, Zap } from "lucide-react";
 import { motion } from "motion/react";
-import { useCreateCheckoutSession } from "../hooks/useStripe";
 
 interface PremiumUpgradeDialogProps {
   open: boolean;
   onClose: () => void;
+  onUnlock: () => void;
 }
 
 export default function PremiumUpgradeDialog({
   open,
   onClose,
+  onUnlock,
 }: PremiumUpgradeDialogProps) {
-  const createCheckout = useCreateCheckoutSession();
-
-  async function handleSubscribe() {
-    const origin = window.location.origin;
-    const successUrl = `${origin}/payment-success?session_id={CHECKOUT_SESSION_ID}`;
-    const cancelUrl = `${origin}/payment-failure`;
-
-    try {
-      const session = await createCheckout.mutateAsync({
-        items: [
-          {
-            productName: "Muscle Build Advanced",
-            currency: "usd",
-            quantity: 1n,
-            priceInCents: 300n,
-            productDescription:
-              "Monthly subscription to Muscle Build Advanced - Muscle Heatmap",
-          },
-        ],
-        successUrl,
-        cancelUrl,
-      });
-      window.location.href = session.url;
-    } catch {
-      // error handled by mutation state
-    }
-  }
-
   return (
     <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
       <DialogContent
         className="sm:max-w-sm gap-0 p-0 overflow-hidden border-border"
         data-ocid="premium.dialog"
       >
-        {/* Premium gradient header */}
+        {/* Header */}
         <div className="relative bg-gradient-to-br from-primary/20 via-primary/10 to-transparent p-6 pb-4 border-b border-border/50">
           <button
             type="button"
@@ -109,44 +82,23 @@ export default function PremiumUpgradeDialog({
           ))}
         </div>
 
-        {/* Price + CTA */}
+        {/* CTA */}
         <div className="px-6 pb-6 pt-2">
           <div className="flex items-baseline gap-1 mb-4">
             <span className="text-3xl font-display font-bold text-foreground">
-              $3
-            </span>
-            <span className="text-muted-foreground text-sm font-body">
-              / month
+              Free
             </span>
           </div>
 
           <DialogFooter className="flex-col gap-2 sm:flex-col">
             <Button
-              onClick={handleSubscribe}
-              disabled={createCheckout.isPending}
+              onClick={onUnlock}
               className="w-full bg-primary text-primary-foreground hover:bg-primary/90 font-body font-semibold shadow-glow-sm"
               data-ocid="premium.subscribe_button"
             >
-              {createCheckout.isPending ? (
-                <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Redirecting to checkout...
-                </>
-              ) : (
-                <>
-                  <Crown className="w-4 h-4 mr-2" />
-                  Subscribe for $3/month
-                </>
-              )}
+              <Crown className="w-4 h-4 mr-2" />
+              Unlock for Free
             </Button>
-
-            {createCheckout.isError && (
-              <p className="text-xs text-destructive text-center font-body">
-                {createCheckout.error instanceof Error
-                  ? createCheckout.error.message
-                  : "Failed to start checkout. Please try again."}
-              </p>
-            )}
 
             <Button
               variant="ghost"
