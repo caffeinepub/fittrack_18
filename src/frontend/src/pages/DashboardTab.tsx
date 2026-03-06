@@ -312,7 +312,7 @@ export default function DashboardTab({ onNavigate, goal }: DashboardTabProps) {
       >
         <div className="flex items-center justify-between px-4 py-3 border-b border-border">
           <div className="flex items-center gap-2">
-            <Scale className="w-4 h-4 text-protein" />
+            <Scale className="w-4 h-4 text-primary" />
             <h3 className="font-display font-bold text-sm text-foreground">
               Body Weight
             </h3>
@@ -337,7 +337,7 @@ export default function DashboardTab({ onNavigate, goal }: DashboardTabProps) {
               </div>
             </div>
             <div className="text-right">
-              <div className="font-display font-black text-3xl text-protein">
+              <div className="font-display font-black text-3xl text-primary">
                 {latestWeight.weight.toFixed(1)}
               </div>
               <div className="text-xs text-muted-foreground font-body">kg</div>
@@ -352,7 +352,7 @@ export default function DashboardTab({ onNavigate, goal }: DashboardTabProps) {
             <Button
               size="sm"
               variant="ghost"
-              className="mt-2 text-protein"
+              className="mt-2 text-primary"
               onClick={() => onNavigate("weight")}
             >
               Log your weight

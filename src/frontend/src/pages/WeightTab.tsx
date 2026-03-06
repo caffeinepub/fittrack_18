@@ -108,12 +108,12 @@ function WeightChart({ entries, useKg }: WeightChartProps) {
           <linearGradient id="weightGrad" x1="0" y1="0" x2="0" y2="1">
             <stop
               offset="0%"
-              stopColor="oklch(0.65 0.18 230)"
-              stopOpacity="0.3"
+              stopColor="oklch(0.60 0.22 262)"
+              stopOpacity="0.35"
             />
             <stop
               offset="100%"
-              stopColor="oklch(0.65 0.18 230)"
+              stopColor="oklch(0.60 0.22 262)"
               stopOpacity="0.02"
             />
           </linearGradient>
@@ -126,7 +126,7 @@ function WeightChart({ entries, useKg }: WeightChartProps) {
         <polyline
           points={polyline}
           fill="none"
-          stroke="oklch(0.65 0.18 230)"
+          stroke="oklch(0.60 0.22 262)"
           strokeWidth="2"
           strokeLinecap="round"
           strokeLinejoin="round"
@@ -141,10 +141,10 @@ function WeightChart({ entries, useKg }: WeightChartProps) {
             r={i === points.length - 1 ? 4 : 2.5}
             fill={
               i === points.length - 1
-                ? "oklch(0.65 0.18 230)"
-                : "oklch(0.16 0.008 250)"
+                ? "oklch(0.60 0.22 262)"
+                : "oklch(0.18 0.05 262)"
             }
-            stroke="oklch(0.65 0.18 230)"
+            stroke="oklch(0.60 0.22 262)"
             strokeWidth="1.5"
           />
         ))}
@@ -386,8 +386,8 @@ export default function WeightTab() {
                 className="bg-card border border-border rounded-xl px-4 py-3 flex items-center justify-between gap-3"
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-lg bg-protein/15 flex items-center justify-center flex-shrink-0">
-                    <Scale className="w-4 h-4 text-protein" />
+                  <div className="w-9 h-9 rounded-lg bg-primary/15 flex items-center justify-center flex-shrink-0">
+                    <Scale className="w-4 h-4 text-primary" />
                   </div>
                   <div>
                     <div className="text-xs text-muted-foreground font-body">

@@ -15,6 +15,10 @@ export default {
       },
     },
     extend: {
+      fontFamily: {
+        display: ["Cabinet Grotesk", "sans-serif"],
+        body: ["Figtree", "sans-serif"],
+      },
       colors: {
         border: "oklch(var(--border))",
         input: "oklch(var(--input))",
@@ -66,6 +70,11 @@ export default {
           border: "oklch(var(--sidebar-border))",
           ring: "oklch(var(--sidebar-ring))",
         },
+        // Macro nutrient semantic colors
+        calories: "oklch(var(--calories) / <alpha-value>)",
+        protein: "oklch(var(--protein) / <alpha-value>)",
+        carbs: "oklch(var(--carbs) / <alpha-value>)",
+        fat: "oklch(var(--fat) / <alpha-value>)",
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -74,6 +83,9 @@ export default {
       },
       boxShadow: {
         xs: "0 1px 2px 0 rgba(0,0,0,0.05)",
+        glow: "0 0 20px oklch(0.50 0.22 262 / 0.35), 0 0 40px oklch(0.50 0.22 262 / 0.15)",
+        "glow-sm":
+          "0 0 8px oklch(0.50 0.22 262 / 0.30), 0 0 16px oklch(0.50 0.22 262 / 0.12)",
       },
       keyframes: {
         "accordion-down": {
