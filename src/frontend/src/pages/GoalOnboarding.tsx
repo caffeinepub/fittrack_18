@@ -1,7 +1,15 @@
 import { Button } from "@/components/ui/button";
-import { Dumbbell, Heart, TrendingDown, TrendingUp } from "lucide-react";
+import { Heart, TrendingDown, TrendingUp } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
+
+function BicepIcon({ className }: { className?: string }) {
+  return (
+    <span className={`leading-none ${className ?? ""}`} aria-hidden="true">
+      💪
+    </span>
+  );
+}
 
 interface GoalOption {
   id: string;
@@ -36,7 +44,7 @@ const GOALS: GoalOption[] = [
     id: "gain_muscle",
     label: "Gain Muscle",
     description: "Lift heavy & boost protein intake",
-    icon: Dumbbell,
+    icon: BicepIcon,
     accentClass: "text-primary",
     bgClass: "bg-primary/10",
     ringClass: "ring-primary/60",
@@ -92,13 +100,13 @@ export default function GoalOnboarding({ onComplete }: GoalOnboardingProps) {
             }}
             className="w-16 h-16 rounded-2xl bg-primary flex items-center justify-center shadow-glow mx-auto mb-5"
           >
-            <Dumbbell className="w-8 h-8 text-primary-foreground" />
+            <span className="text-3xl leading-none">💪</span>
           </motion.div>
           <h1 className="font-display font-black text-3xl text-foreground tracking-tight leading-tight">
             What's your goal?
           </h1>
           <p className="text-muted-foreground text-sm mt-2 font-body leading-relaxed">
-            We'll personalize FitTrack for you.
+            We'll personalize Muscle Build for you.
           </p>
         </motion.div>
 

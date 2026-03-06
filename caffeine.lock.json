@@ -10,7 +10,9 @@
     "initial-app": "1.0.0",
     "authorization": "4.0.1",
     "qr-code": "1.0.1",
-    "camera": "1.0.1"
+    "camera": "1.0.1",
+    "stripe": "3.0.0",
+    "http-outcalls": "3.0.0"
   },
   "tags": [],
   "aiCoreVersion": "0.dev"

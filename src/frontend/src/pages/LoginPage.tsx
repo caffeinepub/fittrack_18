@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Dumbbell, Target, TrendingUp, Zap } from "lucide-react";
+import { Target, TrendingUp, Zap } from "lucide-react";
 import { motion } from "motion/react";
 import { useInternetIdentity } from "../hooks/useInternetIdentity";
 
@@ -7,10 +7,22 @@ export default function LoginPage() {
   const { login, isLoggingIn } = useInternetIdentity();
 
   const features = [
-    { icon: Target, label: "Track Calories & Macros", color: "text-calories" },
-    { icon: Dumbbell, label: "Log Your Workouts", color: "text-primary" },
-    { icon: TrendingUp, label: "Monitor Weight Trends", color: "text-protein" },
-    { icon: Zap, label: "Hit Your Daily Goals", color: "text-carbs" },
+    {
+      icon: <Target className="w-5 h-5 flex-shrink-0 text-calories" />,
+      label: "Track Calories & Macros",
+    },
+    {
+      icon: <span className="text-base leading-none flex-shrink-0">💪</span>,
+      label: "Log Your Workouts",
+    },
+    {
+      icon: <TrendingUp className="w-5 h-5 flex-shrink-0 text-protein" />,
+      label: "Monitor Weight Trends",
+    },
+    {
+      icon: <Zap className="w-5 h-5 flex-shrink-0 text-carbs" />,
+      label: "Hit Your Daily Goals",
+    },
   ];
 
   return (
@@ -36,10 +48,10 @@ export default function LoginPage() {
             transition={{ delay: 0.1, type: "spring", stiffness: 300 }}
             className="w-20 h-20 rounded-2xl bg-primary flex items-center justify-center shadow-glow mb-4"
           >
-            <Dumbbell className="w-10 h-10 text-primary-foreground" />
+            <span className="text-4xl leading-none">💪</span>
           </motion.div>
           <h1 className="font-display font-black text-4xl tracking-tight text-foreground">
-            FitTrack
+            Muscle Build
           </h1>
           <p className="text-muted-foreground text-sm mt-2 font-body text-center">
             Your all-in-one fitness companion
@@ -48,23 +60,20 @@ export default function LoginPage() {
 
         {/* Features */}
         <div className="space-y-3 mb-10">
-          {features.map((feature, i) => {
-            const Icon = feature.icon;
-            return (
-              <motion.div
-                key={feature.label}
-                initial={{ opacity: 0, x: -16 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.2 + i * 0.08, duration: 0.3 }}
-                className="flex items-center gap-3 bg-card border border-border rounded-xl px-4 py-3"
-              >
-                <Icon className={`w-5 h-5 flex-shrink-0 ${feature.color}`} />
-                <span className="text-sm font-body text-foreground font-medium">
-                  {feature.label}
-                </span>
-              </motion.div>
-            );
-          })}
+          {features.map((feature, i) => (
+            <motion.div
+              key={feature.label}
+              initial={{ opacity: 0, x: -16 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.2 + i * 0.08, duration: 0.3 }}
+              className="flex items-center gap-3 bg-card border border-border rounded-xl px-4 py-3"
+            >
+              {feature.icon}
+              <span className="text-sm font-body text-foreground font-medium">
+                {feature.label}
+              </span>
+            </motion.div>
+          ))}
         </div>
 
         {/* Login CTA */}

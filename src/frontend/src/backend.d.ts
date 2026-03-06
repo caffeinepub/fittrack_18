@@ -13,13 +13,10 @@ export interface Exercise {
     reps: bigint;
     sets: bigint;
 }
-export interface FoodEntry {
-    fat: number;
-    carbs: number;
-    date: string;
-    calories: number;
-    name: string;
-    protein: number;
+export interface TransformationOutput {
+    status: bigint;
+    body: Uint8Array;
+    headers: Array<http_header>;
 }
 export interface WorkoutSession {
     duration: number;
@@ -30,6 +27,50 @@ export interface WorkoutSession {
 export interface BodyWeightEntry {
     weight: number;
     date: string;
+}
+export interface http_header {
+    value: string;
+    name: string;
+}
+export interface http_request_result {
+    status: bigint;
+    body: Uint8Array;
+    headers: Array<http_header>;
+}
+export interface ShoppingItem {
+    productName: string;
+    currency: string;
+    quantity: bigint;
+    priceInCents: bigint;
+    productDescription: string;
+}
+export interface FoodEntry {
+    fat: number;
+    carbs: number;
+    date: string;
+    calories: number;
+    name: string;
+    protein: number;
+}
+export interface TransformationInput {
+    context: Uint8Array;
+    response: http_request_result;
+}
+export type StripeSessionStatus = {
+    __kind__: "completed";
+    completed: {
+        userPrincipal?: string;
+        response: string;
+    };
+} | {
+    __kind__: "failed";
+    failed: {
+        error: string;
+    };
+};
+export interface StripeConfiguration {
+    allowedCountries: Array<string>;
+    secretKey: string;
 }
 export interface DailyTotals {
     fat: number;
@@ -50,6 +91,7 @@ export interface backendInterface {
     addFoodEntry(entry: FoodEntry): Promise<void>;
     addWorkoutSession(session: WorkoutSession): Promise<void>;
     assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
+    createCheckoutSession(items: Array<ShoppingItem>, successUrl: string, cancelUrl: string): Promise<string>;
     deleteBodyWeightEntry(date: string): Promise<void>;
     deleteFoodEntry(date: string, name: string): Promise<void>;
     deleteWorkoutSession(date: string, name: string): Promise<void>;
@@ -59,9 +101,13 @@ export interface backendInterface {
     getCallerUserRole(): Promise<UserRole>;
     getDailyTotals(date: string): Promise<DailyTotals>;
     getFoodEntriesByDate(date: string): Promise<Array<FoodEntry>>;
+    getStripeSessionStatus(sessionId: string): Promise<StripeSessionStatus>;
     getUserProfile(user: Principal): Promise<UserProfile | null>;
     getWorkoutSessionsByDate(date: string): Promise<Array<WorkoutSession>>;
     isCallerAdmin(): Promise<boolean>;
+    isStripeConfigured(): Promise<boolean>;
     saveCallerUserProfile(profile: UserProfile): Promise<void>;
     seedDemoData(): Promise<void>;
+    setStripeConfiguration(config: StripeConfiguration): Promise<void>;
+    transform(input: TransformationInput): Promise<TransformationOutput>;
 }

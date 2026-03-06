@@ -8,12 +8,14 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Toaster } from "@/components/ui/sonner";
-import { Copy, Dumbbell, Share2, X } from "lucide-react";
+import { Copy, Share2, X } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import BottomNav from "./components/BottomNav";
+import PremiumUpgradeDialog from "./components/PremiumUpgradeDialog";
 import QRCodeDisplay from "./components/QRCodeDisplay";
+import StripeSetup from "./components/StripeSetup";
 import { useActor } from "./hooks/useActor";
 import { useInternetIdentity } from "./hooks/useInternetIdentity";
 import {
@@ -22,15 +24,24 @@ import {
   useFoodEntriesByDate,
   useSeedDemoData,
 } from "./hooks/useQueries";
+import { usePremiumStatus } from "./hooks/useStripe";
 import { useUserGoal } from "./hooks/useUserGoal";
 import DashboardTab from "./pages/DashboardTab";
 import GoalOnboarding from "./pages/GoalOnboarding";
 import LoginPage from "./pages/LoginPage";
+import MuscleHeatmapTab from "./pages/MuscleHeatmapTab";
 import NutritionTab from "./pages/NutritionTab";
+import PaymentFailure from "./pages/PaymentFailure";
+import PaymentSuccess from "./pages/PaymentSuccess";
 import WeightTab from "./pages/WeightTab";
 import WorkoutsTab from "./pages/WorkoutsTab";
 
-export type TabName = "dashboard" | "nutrition" | "workouts" | "weight";
+export type TabName =
+  | "dashboard"
+  | "nutrition"
+  | "workouts"
+  | "weight"
+  | "body";
 
 function today() {
   return new Date().toISOString().split("T")[0];
@@ -39,13 +50,23 @@ function today() {
 function AppShell({ goal }: { goal?: string | null }) {
   const [activeTab, setActiveTab] = useState<TabName>("dashboard");
   const [shareOpen, setShareOpen] = useState(false);
+  const [premiumDialogOpen, setPremiumDialogOpen] = useState(false);
   const { identity } = useInternetIdentity();
-  const appUrl = window.location.origin;
+  const { isPremium } = usePremiumStatus();
+  const appUrl = "https://musclebuild.com";
 
   function copyLink() {
     navigator.clipboard.writeText(appUrl).then(() => {
       toast.success("Link copied to clipboard!");
     });
+  }
+
+  function handleTabChange(tab: TabName) {
+    if (tab === "body" && !isPremium) {
+      setPremiumDialogOpen(true);
+      return;
+    }
+    setActiveTab(tab);
   }
   const { actor, isFetching: actorFetching } = useActor();
   const seedMutation = useSeedDemoData();
@@ -92,10 +113,10 @@ function AppShell({ goal }: { goal?: string | null }) {
       <header className="sticky top-0 z-40 bg-background/95 backdrop-blur-md border-b border-border px-4 py-3 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center shadow-glow-sm">
-            <Dumbbell className="w-4 h-4 text-primary-foreground" />
+            <span className="text-sm leading-none">💪</span>
           </div>
           <span className="font-display font-bold text-lg tracking-tight text-foreground">
-            FitTrack
+            Muscle Build
           </span>
         </div>
         <div className="flex items-center gap-3">
@@ -112,7 +133,7 @@ function AppShell({ goal }: { goal?: string | null }) {
             className="w-8 h-8 text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors"
             onClick={() => setShareOpen(true)}
             data-ocid="share.open_modal_button"
-            aria-label="Share FitTrack"
+            aria-label="Share Muscle Build"
           >
             <Share2 className="w-4 h-4" />
           </Button>
@@ -124,7 +145,7 @@ function AppShell({ goal }: { goal?: string | null }) {
         <DialogContent className="sm:max-w-sm" data-ocid="share.dialog">
           <DialogHeader>
             <DialogTitle className="font-display text-xl text-foreground">
-              Share FitTrack
+              Share Muscle Build
             </DialogTitle>
             <DialogDescription className="text-muted-foreground">
               Scan the QR code or copy the link to share this app.
@@ -224,11 +245,35 @@ function AppShell({ goal }: { goal?: string | null }) {
               <WeightTab />
             </motion.div>
           )}
+          {activeTab === "body" && isPremium && (
+            <motion.div
+              key="body"
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.2 }}
+            >
+              <MuscleHeatmapTab />
+            </motion.div>
+          )}
         </AnimatePresence>
       </main>
 
+      {/* Premium Upgrade Dialog */}
+      <PremiumUpgradeDialog
+        open={premiumDialogOpen}
+        onClose={() => setPremiumDialogOpen(false)}
+      />
+
       {/* Bottom Navigation */}
-      <BottomNav activeTab={activeTab} onTabChange={setActiveTab} />
+      <BottomNav
+        activeTab={activeTab}
+        onTabChange={handleTabChange}
+        isPremium={isPremium}
+      />
+
+      {/* Stripe admin setup */}
+      <StripeSetup />
 
       <Toaster />
     </div>
@@ -239,12 +284,21 @@ export default function App() {
   const { identity, isInitializing } = useInternetIdentity();
   const { goal, setGoal } = useUserGoal();
 
+  // Handle payment redirect pages — no auth needed
+  const pathname = window.location.pathname;
+  if (pathname === "/payment-success") {
+    return <PaymentSuccess />;
+  }
+  if (pathname === "/payment-failure") {
+    return <PaymentFailure />;
+  }
+
   if (isInitializing) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
           <div className="w-12 h-12 rounded-xl bg-primary flex items-center justify-center shadow-glow">
-            <Dumbbell className="w-6 h-6 text-primary-foreground" />
+            <span className="text-xl leading-none">💪</span>
           </div>
           <div className="flex gap-1">
             <div className="w-2 h-2 rounded-full bg-primary animate-bounce [animation-delay:-0.3s]" />

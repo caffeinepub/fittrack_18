@@ -5,7 +5,6 @@ import {
   Beef,
   ChevronRight,
   Droplets,
-  Dumbbell,
   Flame,
   Heart,
   Loader2,
@@ -31,6 +30,14 @@ interface DashboardTabProps {
   goal?: string | null;
 }
 
+function BicepIcon({ className }: { className?: string }) {
+  return (
+    <span className={`leading-none ${className ?? ""}`} aria-hidden="true">
+      💪
+    </span>
+  );
+}
+
 const GOAL_META: Record<
   string,
   {
@@ -54,7 +61,7 @@ const GOAL_META: Record<
   },
   gain_muscle: {
     label: "Gain Muscle",
-    icon: Dumbbell,
+    icon: BicepIcon,
     colorClass: "text-primary",
     bgClass: "bg-primary/15",
   },
@@ -244,7 +251,9 @@ export default function DashboardTab({ onNavigate, goal }: DashboardTabProps) {
       >
         <div className="flex items-center justify-between px-4 py-3 border-b border-border">
           <div className="flex items-center gap-2">
-            <Dumbbell className="w-4 h-4 text-primary" />
+            <span className="text-sm leading-none" aria-hidden="true">
+              💪
+            </span>
             <h3 className="font-display font-bold text-sm text-foreground">
               Recent Workouts
             </h3>
@@ -260,7 +269,12 @@ export default function DashboardTab({ onNavigate, goal }: DashboardTabProps) {
 
         {recentWorkouts.length === 0 ? (
           <div className="p-6 text-center">
-            <Dumbbell className="w-8 h-8 text-muted-foreground/50 mx-auto mb-2" />
+            <span
+              className="text-3xl leading-none block mx-auto mb-2"
+              aria-hidden="true"
+            >
+              💪
+            </span>
             <p className="text-sm text-muted-foreground font-body">
               No workouts logged yet
             </p>

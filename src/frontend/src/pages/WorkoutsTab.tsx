@@ -16,14 +16,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
-import {
-  ChevronDown,
-  ChevronUp,
-  Dumbbell,
-  Loader2,
-  Plus,
-  Trash2,
-} from "lucide-react";
+import { ChevronDown, ChevronUp, Loader2, Plus, Trash2 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -393,7 +386,9 @@ export default function WorkoutsTab() {
           data-ocid="workouts.session.empty_state"
           className="flex flex-col items-center py-16 bg-card border border-border rounded-xl"
         >
-          <Dumbbell className="w-12 h-12 text-muted-foreground/30 mb-3" />
+          <span className="text-5xl leading-none block mb-3" aria-hidden="true">
+            💪
+          </span>
           <p className="text-sm text-muted-foreground font-body">
             No workouts logged yet
           </p>
@@ -423,7 +418,12 @@ export default function WorkoutsTab() {
                   >
                     <div className="flex items-center px-4 py-3.5 gap-3">
                       <div className="w-9 h-9 rounded-lg bg-primary/15 flex items-center justify-center flex-shrink-0">
-                        <Dumbbell className="w-4.5 h-4.5 text-primary" />
+                        <span
+                          className="text-base leading-none"
+                          aria-hidden="true"
+                        >
+                          💪
+                        </span>
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="font-body font-semibold text-sm text-foreground truncate">

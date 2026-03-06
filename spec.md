@@ -1,28 +1,42 @@
-# FitTrack
+# Muscle Build
 
 ## Current State
-FitTrack is a full-stack fitness tracking app with calorie/macro logging, workout tracking, and body weight tracking. After Internet Identity login, users land directly on the dashboard. There is no onboarding flow. User goal preference is not stored anywhere.
+- Full-stack fitness tracker with: calorie/macro logging, workout sessions, body weight tracking, goal onboarding
+- Authorization via Internet Identity
+- QR code sharing, barcode food scanner
+- Components: authorization, qr-code, camera
+- No payment or subscription system
+- No muscle heatmap or advanced analytics
 
 ## Requested Changes (Diff)
 
 ### Add
-- Goal onboarding screen shown once per user after their first login, asking them to pick one of four fitness goals:
-  - Lose Weight
-  - Gain Weight
-  - Gain Muscle
-  - Make Healthier Decisions
-- Store the selected goal in localStorage keyed by the user's principal ID so it only shows once and persists across sessions
-- Display the selected goal on the dashboard as a personalized banner/badge (e.g. "Goal: Gain Muscle")
+- **Stripe $3/month subscription** gating the "Advanced Settings" (muscle heatmap) feature
+- **Muscle Heatmap page** (premium feature behind paywall):
+  - SVG human body diagram (front and back view)
+  - Each major muscle group colored by workout intensity:
+    - Grey = not worked
+    - Blue = lightly worked (1 session in 7 days)
+    - Yellow = moderately worked (2-3 sessions)
+    - Green = well worked (4+ sessions or heavy sets)
+    - Red = overworked / very recently trained (trained today or yesterday)
+  - Muscle groups mapped from workout exercise names (e.g. "Bench Press" → chest, triceps; "Squat" → quads, glutes, hamstrings)
+  - Color legend shown below the diagram
+- **Premium paywall UI**: when user taps the body icon (human figure) in the bottom nav or header, if not subscribed, show an upgrade dialog with "$3/month" CTA linking to Stripe checkout
+- **Subscription status**: stored/checked via Stripe component; premium tab only unlocked after successful payment
 
 ### Modify
-- App.tsx: after login, check if the current user has already selected a goal; if not, show the GoalOnboarding screen before AppShell
-- DashboardTab: show the stored goal as a small motivational badge near the welcome header
+- **Bottom navigation**: add a 5th tab — "Body" — with a human figure icon; this is the entry point to the muscle heatmap (premium)
+- **Workout exercise data**: map exercise names to muscle groups for heatmap computation (client-side mapping, no backend changes needed)
 
 ### Remove
 - Nothing removed
 
 ## Implementation Plan
-1. Create `src/frontend/src/pages/GoalOnboarding.tsx` — full-screen goal picker with four large cards, animated, stores selection to localStorage under key `fittrack_goal_{principalId}`, calls `onComplete(goal)` callback
-2. Create `src/frontend/src/hooks/useUserGoal.ts` — hook that reads/writes the goal from localStorage using the current user's principal as the key
-3. Update `App.tsx` — after identity is confirmed, check `useUserGoal`; if no goal set, render `<GoalOnboarding>` instead of `<AppShell>`; pass goal into AppShell
-4. Update `DashboardTab.tsx` — accept optional `goal` prop and display a small goal badge near the "Today's Overview" header
+1. Select Stripe component
+2. Generate updated Motoko backend with subscription status tracking (premium users)
+3. Build MusclHeatmapTab page with SVG body diagram, color coding, and muscle group mapping logic
+4. Build PremiumUpgradeDialog component shown when non-premium users access the Body tab
+5. Integrate Stripe checkout flow for $3/month
+6. Add "Body" tab to BottomNav and App.tsx tab routing
+7. Wire subscription check: after Stripe success, mark user as premium and unlock heatmap
