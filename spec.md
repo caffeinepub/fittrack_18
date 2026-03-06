@@ -1,23 +1,19 @@
 # Muscle Build
 
 ## Current State
-Full-stack fitness tracking app with food logging, workout sessions, body weight tracking, a muscle heatmap (Body tab), Stripe integration, QR code sharing, and goal selection on first login. Authorization uses role-based access control with admin and user roles.
+The app is a full-stack fitness tracker (calories, protein, workouts, weight, muscle heatmap). It uses Internet Identity for login so each user has their own private account. The share dialog in the header shows a QR code and "Copy Link" button, but the URL is hardcoded to `https://musclebuild.com` — a branding placeholder that does not resolve to the real deployed app. New users who scan the QR code or receive the link cannot actually reach the app.
 
 ## Requested Changes (Diff)
 
 ### Add
-- Backend: `getUserCount` query function accessible only to admins, returns the total number of registered users (size of `userProfiles` map).
-- Frontend: A visible user counter displayed in the admin area (or a dedicated Stats section) showing the total number of accounts created.
+- Nothing new to add.
 
 ### Modify
-- Backend: No changes to existing functions.
-- Frontend: Admin panel or dashboard to include a "Total Users" stat card showing the count returned by `getUserCount`.
+- Update the share URL in `AppShell` from the hardcoded `https://musclebuild.com` to `window.location.origin` so the QR code and copy link always point to the actual live deployed URL.
 
 ### Remove
-- Nothing removed.
+- Remove the hardcoded `appUrl = "https://musclebuild.com"` constant.
 
 ## Implementation Plan
-1. Add `getUserCount` query to `main.mo` that checks for admin role and returns `userProfiles.size()`.
-2. Expose it in `backend.d.ts` bindings.
-3. In the frontend admin section, add a stat card that calls `getUserCount` and displays the number of registered users.
-4. Add `data-ocid` markers to the stat card and any new interactive elements.
+1. In `App.tsx`, replace `const appUrl = "https://musclebuild.com"` with `const appUrl = window.location.origin`.
+2. No other changes needed — the QR code and copy link already use `appUrl`.

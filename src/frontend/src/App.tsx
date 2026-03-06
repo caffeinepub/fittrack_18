@@ -54,7 +54,7 @@ function AppShell({ goal }: { goal?: string | null }) {
   const [premiumDialogOpen, setPremiumDialogOpen] = useState(false);
   const { identity } = useInternetIdentity();
   const { isPremium } = usePremiumStatus();
-  const appUrl = "https://musclebuild.com";
+  const appUrl = window.location.origin;
 
   function copyLink() {
     navigator.clipboard.writeText(appUrl).then(() => {
