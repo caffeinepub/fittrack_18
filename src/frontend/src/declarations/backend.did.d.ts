@@ -31,6 +31,14 @@ export interface FoodEntry {
   'name' : string,
   'protein' : number,
 }
+export interface LeaderboardEntry {
+  'displayName' : string,
+  'totalVolumeLast7Days' : number,
+  'totalVolumeAllTime' : number,
+  'principalText' : string,
+  'workoutCountLast7Days' : bigint,
+  'workoutCountAllTime' : bigint,
+}
 export interface ShoppingItem {
   'productName' : string,
   'currency' : string,
@@ -55,7 +63,7 @@ export interface TransformationOutput {
   'body' : Uint8Array,
   'headers' : Array<http_header>,
 }
-export interface UserProfile { 'name' : string }
+export interface UserProfile { 'displayName' : [] | [string], 'name' : string }
 export type UserRole = { 'admin' : null } |
   { 'user' : null } |
   { 'guest' : null };
@@ -90,6 +98,7 @@ export interface _SERVICE {
   'getCallerUserRole' : ActorMethod<[], UserRole>,
   'getDailyTotals' : ActorMethod<[string], DailyTotals>,
   'getFoodEntriesByDate' : ActorMethod<[string], Array<FoodEntry>>,
+  'getLeaderboard' : ActorMethod<[], Array<LeaderboardEntry>>,
   'getStripeSessionStatus' : ActorMethod<[string], StripeSessionStatus>,
   'getUserProfile' : ActorMethod<[Principal], [] | [UserProfile]>,
   'getWorkoutSessionsByDate' : ActorMethod<[string], Array<WorkoutSession>>,
@@ -97,6 +106,7 @@ export interface _SERVICE {
   'isStripeConfigured' : ActorMethod<[], boolean>,
   'saveCallerUserProfile' : ActorMethod<[UserProfile], undefined>,
   'seedDemoData' : ActorMethod<[], undefined>,
+  'setDisplayName' : ActorMethod<[string], undefined>,
   'setStripeConfiguration' : ActorMethod<[StripeConfiguration], undefined>,
   'transform' : ActorMethod<[TransformationInput], TransformationOutput>,
 }

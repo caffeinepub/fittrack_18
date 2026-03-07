@@ -13,6 +13,14 @@ export interface Exercise {
     reps: bigint;
     sets: bigint;
 }
+export interface LeaderboardEntry {
+    displayName: string;
+    totalVolumeLast7Days: number;
+    totalVolumeAllTime: number;
+    principalText: string;
+    workoutCountLast7Days: bigint;
+    workoutCountAllTime: bigint;
+}
 export interface TransformationOutput {
     status: bigint;
     body: Uint8Array;
@@ -79,6 +87,7 @@ export interface DailyTotals {
     protein: number;
 }
 export interface UserProfile {
+    displayName?: string;
     name: string;
 }
 export enum UserRole {
@@ -101,6 +110,7 @@ export interface backendInterface {
     getCallerUserRole(): Promise<UserRole>;
     getDailyTotals(date: string): Promise<DailyTotals>;
     getFoodEntriesByDate(date: string): Promise<Array<FoodEntry>>;
+    getLeaderboard(): Promise<Array<LeaderboardEntry>>;
     getStripeSessionStatus(sessionId: string): Promise<StripeSessionStatus>;
     getUserProfile(user: Principal): Promise<UserProfile | null>;
     getWorkoutSessionsByDate(date: string): Promise<Array<WorkoutSession>>;
@@ -108,6 +118,7 @@ export interface backendInterface {
     isStripeConfigured(): Promise<boolean>;
     saveCallerUserProfile(profile: UserProfile): Promise<void>;
     seedDemoData(): Promise<void>;
+    setDisplayName(displayName: string): Promise<void>;
     setStripeConfiguration(config: StripeConfiguration): Promise<void>;
     transform(input: TransformationInput): Promise<TransformationOutput>;
 }

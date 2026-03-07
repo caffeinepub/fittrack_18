@@ -44,12 +44,23 @@ export const ShoppingItem = IDL.Record({
   'priceInCents' : IDL.Nat,
   'productDescription' : IDL.Text,
 });
-export const UserProfile = IDL.Record({ 'name' : IDL.Text });
+export const UserProfile = IDL.Record({
+  'displayName' : IDL.Opt(IDL.Text),
+  'name' : IDL.Text,
+});
 export const DailyTotals = IDL.Record({
   'fat' : IDL.Float64,
   'carbs' : IDL.Float64,
   'calories' : IDL.Float64,
   'protein' : IDL.Float64,
+});
+export const LeaderboardEntry = IDL.Record({
+  'displayName' : IDL.Text,
+  'totalVolumeLast7Days' : IDL.Float64,
+  'totalVolumeAllTime' : IDL.Float64,
+  'principalText' : IDL.Text,
+  'workoutCountLast7Days' : IDL.Nat,
+  'workoutCountAllTime' : IDL.Nat,
 });
 export const StripeSessionStatus = IDL.Variant({
   'completed' : IDL.Record({
@@ -109,6 +120,7 @@ export const idlService = IDL.Service({
       [IDL.Vec(FoodEntry)],
       ['query'],
     ),
+  'getLeaderboard' : IDL.Func([], [IDL.Vec(LeaderboardEntry)], ['query']),
   'getStripeSessionStatus' : IDL.Func([IDL.Text], [StripeSessionStatus], []),
   'getUserProfile' : IDL.Func(
       [IDL.Principal],
@@ -124,6 +136,7 @@ export const idlService = IDL.Service({
   'isStripeConfigured' : IDL.Func([], [IDL.Bool], ['query']),
   'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
   'seedDemoData' : IDL.Func([], [], []),
+  'setDisplayName' : IDL.Func([IDL.Text], [], []),
   'setStripeConfiguration' : IDL.Func([StripeConfiguration], [], []),
   'transform' : IDL.Func(
       [TransformationInput],
@@ -171,12 +184,23 @@ export const idlFactory = ({ IDL }) => {
     'priceInCents' : IDL.Nat,
     'productDescription' : IDL.Text,
   });
-  const UserProfile = IDL.Record({ 'name' : IDL.Text });
+  const UserProfile = IDL.Record({
+    'displayName' : IDL.Opt(IDL.Text),
+    'name' : IDL.Text,
+  });
   const DailyTotals = IDL.Record({
     'fat' : IDL.Float64,
     'carbs' : IDL.Float64,
     'calories' : IDL.Float64,
     'protein' : IDL.Float64,
+  });
+  const LeaderboardEntry = IDL.Record({
+    'displayName' : IDL.Text,
+    'totalVolumeLast7Days' : IDL.Float64,
+    'totalVolumeAllTime' : IDL.Float64,
+    'principalText' : IDL.Text,
+    'workoutCountLast7Days' : IDL.Nat,
+    'workoutCountAllTime' : IDL.Nat,
   });
   const StripeSessionStatus = IDL.Variant({
     'completed' : IDL.Record({
@@ -237,6 +261,7 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Vec(FoodEntry)],
         ['query'],
       ),
+    'getLeaderboard' : IDL.Func([], [IDL.Vec(LeaderboardEntry)], ['query']),
     'getStripeSessionStatus' : IDL.Func([IDL.Text], [StripeSessionStatus], []),
     'getUserProfile' : IDL.Func(
         [IDL.Principal],
@@ -252,6 +277,7 @@ export const idlFactory = ({ IDL }) => {
     'isStripeConfigured' : IDL.Func([], [IDL.Bool], ['query']),
     'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
     'seedDemoData' : IDL.Func([], [], []),
+    'setDisplayName' : IDL.Func([IDL.Text], [], []),
     'setStripeConfiguration' : IDL.Func([StripeConfiguration], [], []),
     'transform' : IDL.Func(
         [TransformationInput],

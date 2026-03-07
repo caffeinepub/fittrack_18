@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Target, TrendingUp, Zap } from "lucide-react";
+import { Target, TrendingUp, Trophy, Zap } from "lucide-react";
 import { motion } from "motion/react";
 import { useInternetIdentity } from "../hooks/useInternetIdentity";
 
@@ -22,6 +22,10 @@ export default function LoginPage() {
     {
       icon: <Zap className="w-5 h-5 flex-shrink-0 text-carbs" />,
       label: "Hit Your Daily Goals",
+    },
+    {
+      icon: <Trophy className="w-5 h-5 flex-shrink-0 text-primary" />,
+      label: "Compete on the Leaderboard",
     },
   ];
 
@@ -48,7 +52,11 @@ export default function LoginPage() {
             transition={{ delay: 0.1, type: "spring", stiffness: 300 }}
             className="w-20 h-20 rounded-2xl bg-primary flex items-center justify-center shadow-glow mb-4"
           >
-            <span className="text-4xl leading-none">💪</span>
+            <img
+              src="/assets/generated/mascot-deer.dim_400x400.png"
+              alt="Muscle Build mascot"
+              className="w-16 h-16 object-contain"
+            />
           </motion.div>
           <h1 className="font-display font-black text-4xl tracking-tight text-foreground">
             Muscle Build

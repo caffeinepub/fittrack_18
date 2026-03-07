@@ -1,26 +1,29 @@
 # Muscle Build
 
 ## Current State
-The Nutrition tab has an "Add Food" button that opens a dialog with manual text/number inputs for food name, calories, protein, carbs, and fat. There is also a barcode scanner. Users must type everything from scratch each time.
+Full-stack fitness app with nutrition tracking, workout logging, weight tracking, muscle heatmap, barcode food scanner, QR share, goal onboarding, user counter, and Stripe integration. Five tabs: Dashboard, Nutrition, Workouts, Weight, Body. Backend uses Motoko with authorization, food/workout/weight data per user.
 
 ## Requested Changes (Diff)
 
 ### Add
-- A "Quick Select" food picker panel inside the Add Food dialog, showing a list of common foods the user can tap to auto-fill the form fields instantly
-- A set of built-in popular foods (e.g. Chicken Breast, Eggs, Rice, Banana, etc.) as selectable options
-- Previously logged foods from the user's history shown as quick-select options (pulled from past entries)
-- A search/filter input to narrow the food list by name
+- **Leaderboard / Competition tab** (6th nav tab): shows a ranked list of all users by total workout volume (sets × reps × weight) over the last 7 days and all-time. Users can see their own rank highlighted. Display username, total volume score, number of workouts.
+- **Public display name**: users can set a display name shown on the leaderboard (defaults to truncated principal).
+- **Backend leaderboard API**: `getLeaderboard()` returns top users with aggregated workout stats (public query). `setDisplayName(name: Text)` stores user's leaderboard handle.
+- **Muscular deer mascot**: custom generated image used as the app mascot shown on the leaderboard page header and login page.
 
 ### Modify
-- The Add Food dialog now has two views: (1) a "Quick Select" list view and (2) the manual entry form. Selecting a food from the list switches to the form pre-filled with that food's macros, which the user can adjust before saving.
+- **BottomNav**: add a 6th "Compete" tab with a trophy icon.
+- **App.tsx**: wire the new "compete" tab.
+- **UserProfile type**: add optional `displayName` field.
+- **Login page**: show mascot image.
 
 ### Remove
-- Nothing removed
+- Nothing removed.
 
 ## Implementation Plan
-1. Add a `COMMON_FOODS` array of popular foods with estimated macros in NutritionTab
-2. Add a `useFoodHistory` hook that aggregates unique previously-logged foods from the user's food entries
-3. Modify the Add Food dialog to show a searchable list of foods (common + history) first
-4. When a food is tapped, pre-fill the form and switch to the manual entry view
-5. Add a "Custom" / "Enter manually" option to skip to the blank form
-6. Apply deterministic data-ocid markers to new interactive elements
+1. Generate mascot image (muscular deer).
+2. Update backend: add `displayName` to UserProfile, add `getLeaderboard` public query, add `setDisplayName` mutation.
+3. Frontend: create `LeaderboardTab.tsx` with weekly/all-time toggle, ranked user list, own rank highlight, display name setter dialog.
+4. Update `BottomNav` to add Compete tab.
+5. Update `App.tsx` to include the new tab.
+6. Show mascot on leaderboard header and login page.

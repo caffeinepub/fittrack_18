@@ -3,6 +3,7 @@ import type {
   BodyWeightEntry,
   DailyTotals,
   FoodEntry,
+  LeaderboardEntry,
   WorkoutSession,
 } from "../backend.d";
 import { useActor } from "./useActor";
@@ -173,6 +174,35 @@ export function useSeedDemoData() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries();
+    },
+  });
+}
+
+// ─── Leaderboard Queries ─────────────────────────────────────────────────────
+
+export function useLeaderboard() {
+  const { actor, isFetching } = useActor();
+  return useQuery<LeaderboardEntry[]>({
+    queryKey: ["leaderboard"],
+    queryFn: async () => {
+      if (!actor) return [];
+      return actor.getLeaderboard();
+    },
+    enabled: !!actor && !isFetching,
+    refetchInterval: 30000, // refresh every 30s
+  });
+}
+
+export function useSetDisplayName() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (displayName: string) => {
+      if (!actor) throw new Error("Not connected");
+      return actor.setDisplayName(displayName);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["leaderboard"] });
     },
   });
 }

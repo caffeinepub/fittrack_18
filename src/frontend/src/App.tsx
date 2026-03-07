@@ -29,6 +29,7 @@ import { usePremiumStatus } from "./hooks/useStripe";
 import { useUserGoal } from "./hooks/useUserGoal";
 import DashboardTab from "./pages/DashboardTab";
 import GoalOnboarding from "./pages/GoalOnboarding";
+import LeaderboardTab from "./pages/LeaderboardTab";
 import LoginPage from "./pages/LoginPage";
 import MuscleHeatmapTab from "./pages/MuscleHeatmapTab";
 import NutritionTab from "./pages/NutritionTab";
@@ -42,7 +43,8 @@ export type TabName =
   | "nutrition"
   | "workouts"
   | "weight"
-  | "body";
+  | "body"
+  | "compete";
 
 function today() {
   return new Date().toISOString().split("T")[0];
@@ -264,6 +266,17 @@ function AppShell({ goal }: { goal?: string | null }) {
               transition={{ duration: 0.2 }}
             >
               <MuscleHeatmapTab />
+            </motion.div>
+          )}
+          {activeTab === "compete" && (
+            <motion.div
+              key="compete"
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.2 }}
+            >
+              <LeaderboardTab />
             </motion.div>
           )}
         </AnimatePresence>

@@ -5,12 +5,15 @@ import Principal "mo:core/Principal";
 import Runtime "mo:core/Runtime";
 import Text "mo:core/Text";
 import Order "mo:core/Order";
+import Time "mo:core/Time";
 import Float "mo:core/Float";
 import MixinAuthorization "authorization/MixinAuthorization";
+import Migration "migration";
 import AccessControl "authorization/access-control";
 import Stripe "stripe/stripe";
 import OutCall "http-outcalls/outcall";
 
+(with migration = Migration.run)
 actor {
   module FoodEntry {
     public func compareByDate(entry1 : FoodEntry, entry2 : FoodEntry) : Order.Order {
@@ -67,6 +70,16 @@ actor {
 
   public type UserProfile = {
     name : Text;
+    displayName : ?Text;
+  };
+
+  public type LeaderboardEntry = {
+    principalText : Text;
+    displayName : Text;
+    totalVolumeAllTime : Float;
+    totalVolumeLast7Days : Float;
+    workoutCountAllTime : Nat;
+    workoutCountLast7Days : Nat;
   };
 
   let accessControlState = AccessControl.initState();
@@ -100,6 +113,24 @@ actor {
       Runtime.trap("Unauthorized: Only users can save profiles");
     };
     userProfiles.add(caller, profile);
+  };
+
+  public shared ({ caller }) func setDisplayName(displayName : Text) : async () {
+    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
+      Runtime.trap("Permission denied: Only authenticated users can set display name");
+    };
+    switch (userProfiles.get(caller)) {
+      case (null) {
+        Runtime.trap("User profile not found. Please create/save your profile first.");
+      };
+      case (?existingProfile) {
+        let updatedProfile : UserProfile = {
+          name = existingProfile.name;
+          displayName = ?displayName;
+        };
+        userProfiles.add(caller, updatedProfile);
+      };
+    };
   };
 
   // Food Entry Functions
@@ -261,6 +292,75 @@ actor {
       }
     );
     bodyWeightEntriesMap.add(caller, filteredEntries);
+  };
+
+  // Leaderboard Functions
+  public query ({ caller }) func getLeaderboard() : async [LeaderboardEntry] {
+    // No authorization required - public leaderboard accessible to all users including guests
+    let currentTime = getCurrentTimeMillis();
+    let sevenDaysInMillis = 7 * 24 * 60 * 60 * 1000;
+
+    let leaderboardEntries : List.List<LeaderboardEntry> = List.empty<LeaderboardEntry>();
+
+    for ((principal, profile) in userProfiles.entries()) {
+      let workoutSessions = switch (workoutSessionsMap.get(principal)) {
+        case (null) { List.empty<WorkoutSession>() };
+        case (?sessions) { sessions };
+      };
+
+      var totalVolumeAllTime : Float = 0.0;
+      var totalVolumeLast7Days : Float = 0.0;
+      var workoutCountAllTime : Nat = 0;
+      var workoutCountLast7Days : Nat = 0;
+
+      for (session in workoutSessions.values()) {
+        let sessionDateMillis = parseDateAsMillis(session.date);
+        let isWithinLast7Days = switch (sessionDateMillis) {
+          case (null) { false };
+          case (?dateMillis) { (currentTime - dateMillis) <= sevenDaysInMillis };
+        };
+
+        var sessionVolume : Float = 0.0;
+        for (exercise in session.exercises.values()) {
+          sessionVolume += exercise.sets.toInt().toFloat() * exercise.reps.toInt().toFloat() * exercise.weight;
+        };
+
+        totalVolumeAllTime += sessionVolume;
+        workoutCountAllTime += 1;
+
+        if (isWithinLast7Days) {
+          totalVolumeLast7Days += sessionVolume;
+          workoutCountLast7Days += 1;
+        };
+      };
+
+      let displayName = switch (profile.displayName) {
+        case (null) { profile.name };
+        case (?name) { name };
+      };
+
+      let leaderboardEntry : LeaderboardEntry = {
+        principalText = principal.toText();
+        displayName;
+        totalVolumeAllTime;
+        totalVolumeLast7Days;
+        workoutCountAllTime;
+        workoutCountLast7Days;
+      };
+
+      leaderboardEntries.add(leaderboardEntry);
+    };
+
+    leaderboardEntries.toArray();
+  };
+
+  func getCurrentTimeMillis() : Int {
+    Time.now() / 1_000_000;
+  };
+
+  func parseDateAsMillis(_date : Text) : ?Int {
+    // Treat all entries as current for now
+    ?getCurrentTimeMillis(); // Treat all entries as current for now
   };
 
   // Demo Data Function

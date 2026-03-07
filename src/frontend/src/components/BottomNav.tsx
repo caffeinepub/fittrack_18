@@ -3,6 +3,7 @@ import {
   LayoutDashboard,
   PersonStanding,
   Scale,
+  Trophy,
   UtensilsCrossed,
 } from "lucide-react";
 import { motion } from "motion/react";
@@ -40,6 +41,7 @@ const tabs: {
   { id: "workouts", label: "Workouts", icon: BicepIcon },
   { id: "weight", label: "Weight", icon: Scale },
   { id: "body", label: "Body", icon: PersonStanding },
+  { id: "compete", label: "Compete", icon: Trophy },
 ];
 
 export default function BottomNav({
